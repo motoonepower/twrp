@@ -1,34 +1,14 @@
 #
-# Copyright 2018 The Android Open Source Project
+# Copyright (C) 2021 The Android Open Source Project
+# Copyright (C) 2021 SebaUbuntu's TWRP device tree generator
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# SPDX-License-Identifier: Apache-2.0
 #
 
-# This contains the module build definitions for the hardware-specific
-# components for this device.
-#
-# As much as possible, those components should be built unconditionally,
-# with device-specific names to avoid collisions, to avoid device-specific
-# bitrot and build breakages. Building a component unconditionally does
-# *not* include it on all devices, so it is safe even with hardware-specific
-# components.
+DEVICE_PATH := device/motorola/chef
 
-PLATFORM_PATH := device/motorola/chef
-
-# Platform
-TARGET_BOARD_PLATFORM := sdm660
-TARGET_BOARD_PLATFORM_GPU := qcom-adreno509
-TARGET_USES_64_BIT_BINDER := true
+# For building with minimal manifest
+ALLOW_MISSING_DEPENDENCIES := true
 
 # Architecture
 TARGET_ARCH := arm64
@@ -42,88 +22,58 @@ TARGET_2ND_ARCH_VARIANT := armv7-a-neon
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := generic
+TARGET_BOARD_SUFFIX := _64
+TARGET_USES_64_BIT_BINDER := true
 
-# Enable CPUSets
-ENABLE_CPUSETS := true
-ENABLE_SCHEDBOOST := true
+# Assert
+TARGET_OTA_ASSERT_DEVICE := chef
 
-# Bootctrl
-TARGET_USES_HARDWARE_QCOM_BOOTCTRL := true
-
-# Bootloader
-TARGET_BOOTLOADER_BOARD_NAME := sdm660
-TARGET_NO_BOOTLOADER := true
-TARGET_USES_UEFI := true
-
-# GPT Utils
-BOARD_PROVIDES_GPTUTILS := true
-
-# Kernel
-TARGET_KERNEL_ARCH := arm64
-TARGET_KERNEL_HEADER_ARCH := arm64
-TARGET_PREBUILT_KERNEL := $(PLATFORM_PATH)/Image.gz-dtb
-BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200,n8 androidboot.console=ttyMSM0 earlycon=msm_serial_dm,0xc170000 androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x37 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 sched_enable_hmp=1 sched_enable_power_aware=1 service_locator.enable=1 swiotlb=1 androidboot.configfs=true androidboot.usbcontroller=a800000.dwc3 androidboot.hab.csv=0 androidboot.hab.product=chef androidboot.hab.cid=50 androidboot.selinux=permissive
-# For the love of all that is holy, please do not include this in your ROM unless you really want TWRP to not work correctly!
-BOARD_KERNEL_CMDLINE += androidboot.fastboot=1
-BOARD_KERNEL_BASE := 0x00000000
-BOARD_KERNEL_PAGESIZE := 4096
-BOARD_KERNEL_TAGS_OFFSET := 0x00000100
-BOARD_RAMDISK_OFFSET := 0x01000000
-BOARD_MKBOOTIMG_ARGS := --kernel_offset 0x00008000 --ramdisk_offset $(BOARD_RAMDISK_OFFSET) --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
-
-# Partitions
-BOARD_BOOTIMAGE_PARTITION_SIZE := 0x04000000
-BOARD_RECOVERYIMAGE_PARTITION_SIZE := 0x04000000
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 0xBE000000
-BOARD_FLASH_BLOCK_SIZE := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
-
-# Recovery
-BOARD_HAS_NO_SELECT_BUTTON := true
+# File systems
 BOARD_HAS_LARGE_FILESYSTEM := true
-TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
+#BOARD_RECOVERYIMAGE_PARTITION_SIZE := 22820070 # This is the maximum known partition size, but it can be higher, so we just omit it
+BOARD_SYSTEMIMAGE_PARTITION_TYPE := ext4
+BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
+TARGET_COPY_OUT_VENDOR := vendor
 
-# A/B device flags
-TARGET_NO_KERNEL := false
-#TARGET_NO_RECOVERY := true
-BOARD_USES_RECOVERY_AS_BOOT := true
-BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
+# A/B
 AB_OTA_UPDATER := true
-USE_COMMON_BOOTCTRL := true
+AB_OTA_PARTITIONS += \
+    boot \
+    system \
+    vendor
 
-# Crypto
-TW_INCLUDE_CRYPTO := true
-TW_INCLUDE_FBE := true
-#TARGET_KEYMASTER_WAIT_FOR_QSEE := true
-PLATFORM_SECURITY_PATCH := 2025-12-31
+TW_INCLUDE_REPACKTOOLS := true
+
+# Kernel
+BOARD_KERNEL_CMDLINE := console=ttyMSM0,115200,n8 androidboot.console=ttyMSM0 earlycon=msm_serial_dm,0xc170000 androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x37 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 sched_enable_hmp=1 sched_enable_power_aware=1 service_locator.enable=1 swiotlb=1 loop.max_part=7 androidboot.hab.csv=39 androidboot.hab.product=chef androidboot.hab.cid=50 buildvariant=user veritykeyid=id:b640f6ee9102b88daa3450b13ef25fc9eb143d63
+TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/Image.gz-dtb
+BOARD_KERNEL_BASE := 0x00000000
+BOARD_KERNEL_PAGESIZE := 4096
+BOARD_RAMDISK_OFFSET := 0x01000000
+BOARD_KERNEL_TAGS_OFFSET := 0x00000100
+BOARD_FLASH_BLOCK_SIZE := 262144 # (BOARD_KERNEL_PAGESIZE * 64)
+BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
+BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
+TARGET_KERNEL_ARCH := arm64
+TARGET_KERNEL_HEADER_ARCH := arm64
+TARGET_KERNEL_SOURCE := kernel/motorola/chef
+TARGET_KERNEL_CONFIG := chef_defconfig
+
+# Platform
+TARGET_BOARD_PLATFORM := sdm660
+
+# Hack: prevent anti rollback
+PLATFORM_SECURITY_PATCH := 2099-12-31
+VENDOR_SECURITY_PATCH := 2099-12-31
 PLATFORM_VERSION := 16.1.0
 
-# TWRP
+# TWRP Configuration
 TW_THEME := portrait_hdpi
-TW_BRIGHTNESS_PATH := "/sys/class/leds/lcd-backlight/brightness"
-RECOVERY_SDCARD_ON_DATA := true
-TW_EXCLUDE_SUPERSU := true
-TARGET_RECOVERY_QCOM_RTC_FIX := true
-BOARD_SUPPRESS_SECURE_ERASE := true
-TW_INPUT_BLACKLIST := "hbtp_vm"
-TW_INCLUDE_NTFS_3G := true
-TW_DEFAULT_BRIGHTNESS := 80
-TW_SCREEN_BLANK_ON_BOOT := true
-TW_EXCLUDE_DEFAULT_USB_INIT := true
-TARGET_RECOVERY_DEVICE_MODULES += android.hardware.boot@1.0
-TW_USE_TOOLBOX := true
-TW_EXCLUDE_TWRPAPP := true
-TWRP_DEVICE_VERSION := 1
-
-# Asian region languages
 TW_EXTRA_LANGUAGES := true
-# TW_DEFAULT_LANGUAGE := zh_CN
-
-# Debug flags
-#TWRP_INCLUDE_LOGCAT := true
-#TARGET_USES_LOGD := true
-
-# Workaround for error copying vendor files to recovery ramdisk
-BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
-TARGET_COPY_OUT_VENDOR := vendor
+TW_SCREEN_BLANK_ON_BOOT := true
+TW_INPUT_BLACKLIST := "hbtp_vm"
+TW_USE_TOOLBOX := true
