@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-DEVICE_PATH := device/motorola/chef_sprout
+DEVICE_PATH := device/motorola/chef
 
 # For building with minimal manifest
 ALLOW_MISSING_DEPENDENCIES := true
@@ -26,7 +26,7 @@ TARGET_BOARD_SUFFIX := _64
 TARGET_USES_64_BIT_BINDER := true
 
 # Assert
-TARGET_OTA_ASSERT_DEVICE := chef_sprout
+TARGET_OTA_ASSERT_DEVICE := chef
 
 # File systems
 BOARD_HAS_LARGE_FILESYSTEM := true
@@ -60,8 +60,8 @@ BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_HEADER_ARCH := arm64
-TARGET_KERNEL_SOURCE := kernel/motorola/chef_sprout
-TARGET_KERNEL_CONFIG := chef_sprout_defconfig
+TARGET_KERNEL_SOURCE := kernel/motorola/chef
+TARGET_KERNEL_CONFIG := chef_defconfig
 
 # Platform
 TARGET_BOARD_PLATFORM := sdm660

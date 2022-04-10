@@ -6,9 +6,9 @@
 #
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/omni_chef_sprout.mk
+    $(LOCAL_DIR)/omni_chef.mk
 
 COMMON_LUNCH_CHOICES := \
-    omni_chef_sprout-user \
-    omni_chef_sprout-userdebug \
-    omni_chef_sprout-eng
+    omni_chef-user \
+    omni_chef-userdebug \
+    omni_chef-eng

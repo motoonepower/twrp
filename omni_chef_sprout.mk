@@ -10,16 +10,16 @@ $(call inherit-product-if-exists, $(SRC_TARGET_DIR)/product/embedded.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 
-# Inherit from chef_sprout device
-$(call inherit-product, device/motorola/chef_sprout/device.mk)
+# Inherit from chef device
+$(call inherit-product, device/motorola/chef/device.mk)
 
 # Inherit some common Omni stuff.
 $(call inherit-product, vendor/omni/config/common.mk)
 $(call inherit-product, vendor/omni/config/gsm.mk)
 
 # Device identifier. This must come after all inclusions
-PRODUCT_DEVICE := chef_sprout
-PRODUCT_NAME := omni_chef_sprout
+PRODUCT_DEVICE := chef
+PRODUCT_NAME := omni_chef
 PRODUCT_BRAND := motorola
 PRODUCT_MODEL := motorola one power
 PRODUCT_MANUFACTURER := motorola
