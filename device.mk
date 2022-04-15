@@ -19,7 +19,9 @@ PRODUCT_PACKAGES += \
     android.hardware.boot@1.0-service \
     android.hardware.boot@1.0-impl-wrapper.recovery \
     android.hardware.boot@1.0-impl-wrapper \
-    android.hardware.boot@1.0-impl-recovery
+    android.hardware.boot@1.0-impl.recovery \
+    bootctrl.sdm660 \
+    bootctrl.sdm660.recovery
 
 PRODUCT_PACKAGES += \
     bootctrl.sdm660
